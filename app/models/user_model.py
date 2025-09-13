@@ -34,3 +34,15 @@ class User(Document):
     def __eq__(self, other: object) -> bool:
         if isinstance(other, User):
             return self.email == other.email
+        return False
+    
+    # A propriedade create retorna a data de criação do usuário, 
+    # baseada no tempo de geração do ID.
+    @property
+    def create(self) -> datetime:
+        return self.id.generation_time
+    
+    # A função by_email é um método de classe que retorna um usuário com base no email fornecido.
+    @classmethod
+    async def by_email(self, email: str) -> "User":
+        return await self.find_one(self.email == email)

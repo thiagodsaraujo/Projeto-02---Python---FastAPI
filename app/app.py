@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from core.config import settings
+from models.user_model import User  # Importe seus modelos aqui
 
 
 
@@ -20,10 +21,11 @@ async def app_init():
         settings.MONGO_CONNECTION_STRING).todoapp
     
     # Inicializa o Beanie com a conexão do MongoDB e os modelos definidos
-    await init_beanie(database = client_db, 
+    await init_beanie(database = client, 
                       document_models=[
                             # Adicione seus modelos de documento aqui
                             # Exemplo: User, Item, etc.
+                            User
                       ]
                       
                       
