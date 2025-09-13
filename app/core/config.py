@@ -1,6 +1,7 @@
 from typing import List
 from decouple import config
-from pydantic import AnyHttpUrl, BaseSettings
+from pydantic import AnyHttpUrl
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -14,7 +15,7 @@ class Settings(BaseSettings):
     JWT_REFRESH_SECRET_KEY: str = config("JWT_REFRESH_SECRET_KEY", cast=str)
     
     # Nome do projeto, vindo do arquivo de configuração (.env)
-    PROJECT_NAME: str = config("TODO-AUTH")
+    PROJECT_NAME: str = config("PROJECT_NAME", default="TODO-AUTH")
     
     # Algoritmo usado para assinar os tokens JWT, padrão HS256
     ALGORITHM: str = config("ALGORITHM", default="HS256")
