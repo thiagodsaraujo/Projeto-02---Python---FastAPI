@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from core.config import settings
+
 from models.user_model import User  # Importe seus modelos aqui
+from api.api_v1.router import router
 
 
 
@@ -29,4 +31,11 @@ async def app_init():
                       ]
                       
                       
-        ) 
+        )
+    
+
+# Abaixo, incluímos o roteador da API versão 1
+app.include_router(
+    router,
+    prefix=settings.API_V1_STR,
+)

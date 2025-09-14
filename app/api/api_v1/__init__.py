@@ -1,0 +1,1 @@
+# Torna a pasta 'api_v1' um pacote Python
