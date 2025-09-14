@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
-from schemas.user_schema import UserAuth
+from schemas.user_schema import UserAuth, UserDetail
 from services.user_service import UserService
 import pymongo
 
@@ -12,7 +12,7 @@ async def test():
     return {"message": "User router is working!"}
 
 
-@user_router.post("/create", summary="Create a new user")
+@user_router.post("/create", summary="Create a new user", response_model=UserDetail)
 async def create_user(data:UserAuth):
     try:
         return await UserService.create_user(data)
