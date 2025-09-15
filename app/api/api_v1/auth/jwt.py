@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Any
 from services.user_service import UserService
@@ -43,8 +43,7 @@ async def login(
     if not usuario:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credenciais inválidas",
-            headers={"WWW-Authenticate": "Bearer"}
+            detail="Credenciais inválidas - E-mail ou senha incorretos",
         )
 
     # TODO: Gerar e retornar JWT aqui.
