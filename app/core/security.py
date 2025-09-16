@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-from typing import Any,Union
+from typing import Any,Union, Optional
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from core.config import settings
@@ -51,10 +51,8 @@ def create_access_token(
     - A assinatura usa settings.JWT_SECRET_KEY e settings.ALGORITHM.
     """
     # Determina a duração do token a partir do parâmetro recebido ou da configuração padrão.
-    if isinstance(expires_delta, int):
+    if expires_delta is not None:
         delta = timedelta(minutes=expires_delta)
-    elif isinstance(expires_delta, timedelta):
-        delta = expires_delta
     else:
         delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -72,6 +70,36 @@ def create_access_token(
     jwt_encoded = jwt.encode(
         info_jwt,
         settings.JWT_SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
+
+    return jwt_encoded
+
+def create_refresh_token(
+    subject: Union[str, Any],
+    expires_delta: Optional[Union[int, timedelta]] = None
+) -> str:
+
+    # Determina a duração do token a partir do parâmetro recebido ou da configuração padrão.
+    if expires_delta is not None:
+        delta = timedelta(minutes=expires_delta)
+    else:
+        delta = timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES)
+
+    issued_at = datetime.utcnow()
+    expires_at = issued_at + delta
+
+    # Claims do JWT
+    info_jwt = {
+        "sub": str(subject),  # assunto do token (ex.: id do usuário)
+        "iat": issued_at,     # instante de emissão
+        "exp": expires_at     # instante de expiração
+    }
+
+    # Assina o token com a chave secreta e algoritmo definidos nas configurações
+    jwt_encoded = jwt.encode(
+        info_jwt,
+        settings.JWT_REFRESH_SECRET_KEY,
         algorithm=settings.ALGORITHM
     )
 

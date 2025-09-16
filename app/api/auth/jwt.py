@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Any
 from services.user_service import UserService
+from core.security import create_access_token, create_refresh_token
 
 
 
@@ -46,13 +47,7 @@ async def login(
             detail="Credenciais inválidas - E-mail ou senha incorretos",
         )
 
-    # TODO: Gerar e retornar JWT aqui.
-    # Exemplo futuro:
-    # access_token = criar_token_acesso(sub=usuario.id)
-    # return {"access_token": access_token, "token_type": "bearer"}
-
-    # Retorno temporário (evite expor campos sensíveis).
     return {
-        "id": getattr(usuario, "id", None),
-        "email": email
+        "access_token": create_access_token(usuario.user_id),
+        "refresh_token": create_refresh_token(usuario.user_id),
     }
