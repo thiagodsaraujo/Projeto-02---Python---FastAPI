@@ -28,3 +28,5 @@ class UserDetail(BaseModel):
 
 # ORM = Object-Relational Mapping
 # ODM = Object-Document Mapping (usado em bancos NoSQL como MongoDB)
+    class Config:
+        from_attributes = True  # Pydantic v2: permite usar from_orm (antigo orm_mode)
