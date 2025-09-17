@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = config("ALGORITHM", default="HS256")
     
     # Tempo de expiração do token de acesso (em minutos)
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     
     # Tempo de expiração do token de refresh (em minutos) - 7 dias
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30 * 7 # 7 dias
