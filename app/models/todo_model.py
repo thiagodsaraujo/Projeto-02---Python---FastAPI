@@ -3,8 +3,7 @@ from datetime import datetime
 from uuid import UUID, uuid4
 from beanie import Document, Indexed, before_event, Link, Replace, Insert
 from pydantic import Field
-from models.user_model import User, UserModel   
-
+from .user_model import User
 
 
 class Todo(Document):

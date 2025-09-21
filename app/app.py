@@ -5,7 +5,7 @@ from core.config import settings
 
 from models.user_model import User  # Importe seus modelos aqui
 from api.api_v1.router import router
-from 
+from models.todo_model import Todo
 
 
 
