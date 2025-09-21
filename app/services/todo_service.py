@@ -1,7 +1,7 @@
 from models.user_model import User
 from models.todo_model import Todo
 from typing import List, Optional
-from schemas.todo_schema import TodoCreate
+from schemas.todo_schema import TodoCreate, TodoUpdate
 from uuid import UUID
 
 
@@ -29,13 +29,13 @@ class TodoService:
         :return: A instância de Todo recém-criada.
             """
         # Cria uma nova instância de Todo usando os dados fornecidos (data) e define o proprietário (owner) como o usuário atual.
-        # O método dict() converte o objeto 'data' (provavelmente um Pydantic model) em um dicionário, 
+        # O método model_dump() converte o objeto 'data' (Pydantic model) em um dicionário, 
         # permitindo a expansão dos campos como argumentos nomeados (**kwargs) para o construtor de Todo.
         # Em java, seria algo como new Todo(data.getTitle(), data.getDescription(), user)
-        # Porém, em Python, usamos o unpacking com **data.dict() para passar todos os campos de uma vez.
-        # Os dois ** servem para "desempacotar" o dicionário retornado por data.dict() 
+        # Porém, em Python, usamos o unpacking com **data.model_dump() para passar todos os campos de uma vez.
+        # Os dois ** servem para "desempacotar" o dicionário retornado por data.model_dump() 
         # e passar seus pares chave-valor como argumentos nomeados para o construtor de Todo.
-        todo = Todo(**data.dict(), owner=user)
+        todo = Todo(**data.model_dump(), owner=user)
 
         # Insere o novo objeto Todo no banco de dados de forma assíncrona.
         # O método insert() salva o documento na coleção correspondente e retorna a própria instância já persistida.
@@ -63,3 +63,59 @@ class TodoService:
         )
         return todo
     
+    @staticmethod
+    async def update(user: User, todo_id: UUID, data: TodoUpdate):
+        """
+        Atualiza uma tarefa (todo) existente de um usuário.
+
+        Parâmetros:
+            user (User): Usuário solicitante.
+            todo_id (UUID): ID da tarefa a ser atualizada.
+            data (TodoUpdate): Dados com os campos a serem atualizados.
+
+        Retorna:
+            Todo: A tarefa atualizada.
+
+        Fluxo:
+            1. Busca a tarefa pelo ID e usuário.
+            2. Atualiza apenas os campos fornecidos em 'data'.
+            3. Salva e retorna a tarefa atualizada.
+        """
+        # Busca a tarefa existente
+        todo = await TodoService.detail(user, todo_id)
+        if not todo:
+            return None
+        # Atualiza os campos informados
+        await todo.update({
+            "$set": data.model_dump(exclude_unset=True)
+        })
+        # Salva as alterações no banco
+        await todo.save()
+        # Retorna a tarefa atualizada
+        return todo
+
+    @staticmethod
+    async def delete(user: User, todo_id: UUID) -> bool:
+        """
+        Exclui uma tarefa (todo) existente de um usuário.
+
+        Parâmetros:
+            user (User): Usuário solicitante.
+            todo_id (UUID): ID da tarefa a ser excluída.
+
+        Retorna:
+            bool: True se deletado com sucesso
+
+        Fluxo:
+            1. Busca a tarefa pelo ID e usuário.
+            2. Exclui a tarefa se encontrada.
+        """
+        # Busca a tarefa existente
+        todo = await TodoService.detail(user, todo_id)
+        if not todo:
+            return False
+        # Exclui a tarefa do banco de dados
+        await todo.delete()
+        return True
+
+        

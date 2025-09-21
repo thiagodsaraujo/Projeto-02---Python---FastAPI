@@ -27,7 +27,12 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30 * 7 # 7 dias
     
     # Lista de origens permitidas para CORS (Cross-Origin Resource Sharing)
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://localhost:8080",
+        "http://localhost",
+    ]
     
     # String de conexão com o banco de dados MongoDB
     MONGO_CONNECTION_STRING: str = config("MONGO_CONNECTION_STRING", cast=str)

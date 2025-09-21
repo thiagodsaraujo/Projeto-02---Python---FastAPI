@@ -4,16 +4,25 @@ from uuid import UUID, uuid4
 from beanie import Document, Indexed, before_event, Link, Replace, Insert
 from pydantic import Field
 from .user_model import User
+from pydantic import BaseModel
 
+
+class TodoUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[bool] = None
+    # Todos os campos devem ser opcionais para permitir atualizações parciais
 
 class Todo(Document):
     todo_id: UUID = Field(default_factory=uuid4, description="Identificador único do todo")
     status: bool = False
     title: Indexed(str)
-    description: Indexed(str)
+    description: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     update_at: datetime = Field(default_factory=datetime.utcnow)
     owner: Link[User] # Em Java(Spring), seria @ManyToOne
+
+
 
 
     def __repr__(self) -> str:

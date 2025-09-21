@@ -6,6 +6,7 @@ from core.config import settings
 from models.user_model import User  # Importe seus modelos aqui
 from api.api_v1.router import router
 from models.todo_model import Todo
+from fastapi.middleware.cors import CORSMiddleware # Importe o middleware CORS, serve para permitir requisições de outras origens
 
 
 
@@ -13,6 +14,13 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS, # Permitir requisições dessas origens
+    allow_credentials=True,
+    allow_methods=["*"], # Permitir todos os métodos (GET, POST, etc.
+    allow_headers=["*"]) # Permitir todos os cabeçalhos)
 
 @app.on_event("startup")
 async def app_init():
