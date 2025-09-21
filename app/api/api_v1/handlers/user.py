@@ -34,10 +34,11 @@ async def get_me(user: User = Depends(get_current_user)):
     Parâmetros:
     - user: Objeto do tipo User, injetado automaticamente pelo FastAPI através do Depends(get_current_user).
       O Depends é um recurso do FastAPI que permite a injeção de dependências. 
+      
       Neste caso, ele executa a função get_current_user, que valida o token JWT enviado na requisição,
       decodifica o token, busca o usuário no banco de dados e retorna o objeto User correspondente.
       Se o token for inválido ou o usuário não existir, uma exceção HTTP é lançada automaticamente.
-      # Se fosse no Java, o Depends seria algo como um @Autowired ou @Inject, que injeta a dependência necessária.
+      Se fosse no Java, o Depends seria algo como um @Autowired ou @Inject, que injeta a dependência necessária.
 
     Retorno:
     - Um objeto UserDetail (Pydantic), que contém apenas os dados públicos do usuário (sem senha).

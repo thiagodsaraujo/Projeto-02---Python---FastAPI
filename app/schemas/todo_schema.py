@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
@@ -45,9 +45,8 @@ class TodoDetail(BaseModel):
     created_at: datetime
     # Data da última atualização da tarefa
     update_at: datetime
-    # Identificador do dono/usuário da tarefa
-    owner_id: UUID
+    # # Identificador do dono/usuário da tarefa
+    # owner_id: UUID
 
-    # Configuração para permitir conversão de ORM para modelo Pydantic
-    class Config:
-        orm_mode = True
+    # Trocar Config.orm_mode para model_config (Pydantic v2)
+    model_config = ConfigDict(from_attributes=True)

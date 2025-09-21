@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from uuid import UUID
 from typing import Optional
@@ -28,5 +28,9 @@ class UserDetail(BaseModel):
 
 # ORM = Object-Relational Mapping
 # ODM = Object-Document Mapping (usado em bancos NoSQL como MongoDB)
-    class Config:
-        from_attributes = True  # Pydantic v2: permite usar from_orm (antigo orm_mode)
+class UserOut(BaseModel):
+    id: UUID
+    email: str
+    name: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
