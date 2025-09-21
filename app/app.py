@@ -5,6 +5,7 @@ from core.config import settings
 
 from models.user_model import User  # Importe seus modelos aqui
 from api.api_v1.router import router
+from 
 
 
 
@@ -27,7 +28,8 @@ async def app_init():
                       document_models=[
                             # Adicione seus modelos de documento aqui
                             # Exemplo: User, Item, etc.
-                            User
+                            User,
+                            Todo
                       ]
                       
                       
