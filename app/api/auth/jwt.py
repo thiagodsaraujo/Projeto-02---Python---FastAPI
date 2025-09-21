@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Any
 from services.user_service import UserService
@@ -7,6 +7,10 @@ from schemas.auth_schema import TokenSchema
 from schemas.user_schema import UserDetail
 from models.user_model import User
 from api.dependencies.user_deps import get_current_user
+from pydantic import ValidationError
+from core.config import settings
+from schemas.auth_schema import TokenPayload
+from jose import jwt
 
 
 
@@ -73,3 +77,31 @@ async def test_token(user: User = Depends(get_current_user)):
     Ele depende da função get_current_user que valida o token e busca o usuário no banco.
     """
     return UserDetail.from_orm(user)
+
+@auth_router.post("/refresh", summary="Refresh Token", response_model=TokenSchema)
+async def refresh_token(refresh_token: str = Body(...)):
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            settings.JWT_REFRESH_SECRET_KEY,
+            settings.ALGORITHM
+        )
+        token_data = TokenPayload(**payload)
+    except (jwt.JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Refresh token inválido ou expirado.",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    user = await UserService.get_user_by_id(token_data.sub)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuário não encontrado.",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    return {
+        "access_token": create_access_token(user.user_id),
+        "refresh_token": create_refresh_token(user.user_id)
+    }
