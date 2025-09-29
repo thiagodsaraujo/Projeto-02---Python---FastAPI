@@ -28,7 +28,8 @@ class Settings(BaseSettings):
     
     # Lista de origens permitidas para CORS (Cross-Origin Resource Sharing)
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://localhost:3000",
+        "http://localhost:3000",  # URL do frontend React
+        "http://127.0.0.1:3000",
         "http://localhost:8000",
         "http://localhost:8080",
         "http://localhost",
